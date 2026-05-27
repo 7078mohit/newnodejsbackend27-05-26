@@ -1,0 +1,175 @@
+import crypto from 'crypto';
+import Razorpay from 'razorpay';
+import Wallet from '../models/Wallet.js';
+import UserDetail from '../models/UserDetail.js';
+import Transaction from '../models/Transaction.js';
+
+const getRazorpay = () =>
+  new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+
+// ─── ADD MONEY (manual / admin credit) ───────────────────────────────────────
+export const addMoney = async (req, res) => {
+  try {
+    let { userId, amount, reason, paymentId } = req.body;
+
+    if (!userId || !amount) {
+      return res.status(400).json({ success: false, message: 'UserId and amount are required' });
+    }
+
+    amount = Number(amount);
+    if (amount <= 0) return res.status(400).json({ success: false, message: 'Amount must be greater than 0' });
+
+    const user = await UserDetail.findById(userId);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    let wallet = await Wallet.findOne({ user: userId });
+    if (!wallet) wallet = await Wallet.create({ user: userId, balance: 0, transactions: [] });
+
+    if (paymentId) {
+      const duplicate = wallet.transactions.find((t) => t.paymentId === paymentId);
+      if (duplicate) return res.status(400).json({ success: false, message: 'Payment already processed' });
+    }
+
+    wallet.balance += amount;
+    wallet.transactions.push({ type: 'credit', amount, reason: reason || 'Wallet Top-up', paymentId: paymentId || null });
+    await wallet.save();
+
+    return res.status(200).json({ success: true, message: 'Money added successfully', wallet });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Server error', error: err.message });
+  }
+};
+
+// ─── GET WALLET BY USER ───────────────────────────────────────────────────────
+export const getWalletByUser = async (req, res) => {
+  try {
+    const wallet = await Wallet.findOne({ user: req.params.userId }).populate('user');
+    if (!wallet) return res.status(404).json({ success: false, message: 'Wallet not found' });
+    return res.status(200).json({ success: true, wallet });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Server error', error: err.message });
+  }
+};
+
+// ─── GET ALL WALLETS (admin) ──────────────────────────────────────────────────
+export const getAllWallets = async (req, res) => {
+  try {
+    const wallets = await Wallet.find().populate('user');
+    return res.status(200).json({ success: true, wallets });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Server error', error: err.message });
+  }
+};
+
+// ─── GET CREDIT SUMMARY (by _id) ─────────────────────────────────────────────
+export const getCreditSummary = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await UserDetail.findById(userId).select('wallet freeMinutesRemaining');
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        walletBalance: Number(user.wallet?.balance || 0),
+        currency: user.wallet?.currency || 'INR',
+        freeMinutesRemaining: Number(user.freeMinutesRemaining || 0),
+      },
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Server error', error: err.message });
+  }
+};
+
+// ─── CREATE RAZORPAY RECHARGE ORDER ──────────────────────────────────────────
+export const createRechargeOrder = async (req, res) => {
+  try {
+    const { userId, amount } = req.body;
+    if (!userId || !amount) return res.status(400).json({ success: false, message: 'userId and amount are required' });
+
+    const numericAmount = Number(amount);
+    if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
+      return res.status(400).json({ success: false, message: 'Invalid amount' });
+    }
+
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+      return res.status(500).json({ success: false, message: 'Razorpay keys are not configured' });
+    }
+
+    const user = await UserDetail.findById(userId).select('name email mobileNo');
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    const razorpay = getRazorpay();
+    const receipt = `wallet_${userId}_${Date.now()}`.slice(0, 40);
+    const order = await razorpay.orders.create({
+      amount: Math.round(numericAmount * 100),
+      currency: 'INR',
+      receipt,
+      payment_capture: 1,
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        orderId: order.id,
+        amount: numericAmount,
+        currency: 'INR',
+        keyId: process.env.RAZORPAY_KEY_ID,
+        user: { name: user.name || 'User', email: user.email || '', contact: user.mobileNo || '' },
+      },
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Failed to create recharge order', error: err.message });
+  }
+};
+
+// ─── VERIFY RAZORPAY PAYMENT ──────────────────────────────────────────────────
+export const verifyRechargePayment = async (req, res) => {
+  try {
+    const { userId, amount, razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+    if (!userId || !amount || !razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({ success: false, message: 'Missing payment verification fields' });
+    }
+
+    const payload = `${razorpay_order_id}|${razorpay_payment_id}`;
+    const expectedSignature = crypto
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET || '')
+      .update(payload)
+      .digest('hex');
+
+    if (expectedSignature !== razorpay_signature) {
+      return res.status(400).json({ success: false, message: 'Invalid payment signature' });
+    }
+
+    const duplicate = await Transaction.findOne({ userId, type: 'credit', reason: `Razorpay:${razorpay_payment_id}` });
+    if (duplicate) {
+      const user = await UserDetail.findById(userId).select('wallet freeMinutesRemaining');
+      return res.status(200).json({
+        success: true,
+        message: 'Payment already verified',
+        data: { walletBalance: Number(user?.wallet?.balance || 0), freeMinutesRemaining: Number(user?.freeMinutesRemaining || 0) },
+      });
+    }
+
+    const user = await UserDetail.findById(userId);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    user.wallet = user.wallet || { balance: 0, currency: 'INR' };
+    user.wallet.balance = Number(user.wallet.balance || 0) + Number(amount);
+    await user.save();
+
+    await Transaction.create({ userId, type: 'credit', amount: Number(amount), reason: `Razorpay:${razorpay_payment_id}` });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Wallet recharged successfully',
+      data: { walletBalance: Number(user.wallet.balance), freeMinutesRemaining: Number(user.freeMinutesRemaining || 0) },
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Failed to verify payment', error: err.message });
+  }
+};
