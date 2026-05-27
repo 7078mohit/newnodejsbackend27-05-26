@@ -145,7 +145,7 @@ app.use('/api/transits', transitRoutes);
 app.get('/', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'Kalp Jyotish backend is running'
+    message: 'Backend Deployed Success'
   });
 });
 
