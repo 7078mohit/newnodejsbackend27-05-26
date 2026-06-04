@@ -43,12 +43,26 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
 
           script: |
-            cd /var/www/kalpjyotish-backend
-            git pull origin main
+           export NVM_DIR="/root/.nvm"
+           source /root/.nvm/nvm.sh
 
-            # npm install
-            # npm run build
-            # pm2 restart kalpjyotish-backend
-            /root/.nvm/versions/node/v24.16.0/bin/npm install
+           cd /var/www/kalpjyotish-backend
 
-            /root/.nvm/versions/node/v24.16.0/bin/pm2 restart backend
+           git pull origin main
+
+           npm install
+
+           pm2 restart backend
+
+
+
+          # script: |
+          #   cd /var/www/kalpjyotish-backend
+          #   git pull origin main
+
+          #   # npm install
+          #   # npm run build
+          #   # pm2 restart kalpjyotish-backend
+          #   /root/.nvm/versions/node/v24.16.0/bin/npm install
+
+          #   /root/.nvm/versions/node/v24.16.0/bin/pm2 restart backend
