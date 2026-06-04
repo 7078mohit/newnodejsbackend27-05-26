@@ -145,7 +145,7 @@ app.use('/api/adminplanettransit', adminPlanetTransitRoutes);
 app.get('/', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'Backend Deployed Successful'
+    message: 'Backend Auto Deployed Successful'
   });
 });
 
