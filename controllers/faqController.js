@@ -1,24 +1,6 @@
 import Faq from '../models/Faq.js';
 
-export const getAllFaqs = async (req, res) => {
-  try {
-    const faqs = await Faq.find();
-    return res.json(faqs);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-};
-
-export const getFaqById = async (req, res) => {
-  try {
-    const faq = await Faq.findById(req.params.id);
-    if (!faq) return res.status(404).json({ message: 'FAQ not found' });
-    return res.json(faq);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-};
-
+// Create FAQ
 export const createFaq = async (req, res) => {
   try {
     const { question, answer } = req.body;
@@ -29,6 +11,29 @@ export const createFaq = async (req, res) => {
   }
 };
 
+// Get All FAQ
+export const getAllFaqs = async (req, res) => {
+  try {
+    const faqs = await Faq.find();
+    return res.json(faqs);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// Get FAQ By Id
+export const getFaqById = async (req, res) => {
+  try {
+    const faq = await Faq.findById(req.params.id);
+    if (!faq) return res.status(404).json({ message: 'FAQ not found' });
+    return res.json(faq);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+
+// Update FAQ
 export const updateFaq = async (req, res) => {
   try {
     const faq = await Faq.findByIdAndUpdate(req.params.id, req.body, { new: true });

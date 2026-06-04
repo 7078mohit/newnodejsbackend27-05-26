@@ -1,6 +1,7 @@
 import Client from '../models/Client.js';
 import UserDetail from '../models/UserDetail.js';
 
+// Create Client
 export const signup = async (req, res) => {
   try {
     const {
@@ -23,9 +24,13 @@ export const signup = async (req, res) => {
 
     // Parse preferredLanguages (should be array of objects [{id, name}, {id, name}])
     let parsedLanguages = [];
+
     if (preferredLanguages) {
       try {
-        parsedLanguages = JSON.parse(preferredLanguages);
+        parsedLanguages =
+          typeof preferredLanguages === "string"
+            ? JSON.parse(preferredLanguages)
+            : preferredLanguages;
       } catch (err) {
         return res.status(400).json({
           statusCode: 400,
@@ -98,8 +103,8 @@ export const getClientById = async (req, res) => {
   }
 };
 
-
-export const getUserDetails = async (req, res) => {
+// Get logged-in User Details
+export const getLoggedInUserDetails = async (req, res) => {
   try {
     console.log("req user",req.user);
     
@@ -130,7 +135,7 @@ export const getUserDetails = async (req, res) => {
 };
 
 // ✅ Update Client by ID
-export const updateClient = async (req, res) => {
+export const updateClientById = async (req, res) => {
   try {
     const { id } = req.params;
     const {

@@ -1,6 +1,11 @@
 import Dropdown from '../models/Dropdown.js';
 
-export const getDropdownOptions = async (req, res) => {
+
+// ======================================
+// 1. GET ALL DROPDOWN OPTIONS
+// ======================================
+
+export const getAllDropdownOptions = async (req, res) => {
   try {
     const items = await Dropdown.find();
     const grouped = items.reduce((acc, curr) => {
@@ -13,6 +18,10 @@ export const getDropdownOptions = async (req, res) => {
     return res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
+
+// ======================================
+// 2. ADD DROPDOWN ITEM
+// ======================================
 
 export const addDropdownItem = async (req, res) => {
   try {
@@ -27,6 +36,10 @@ export const addDropdownItem = async (req, res) => {
   }
 };
 
+// ======================================
+// 3. UPDATE DROPDOWN ITEM
+// ======================================
+
 export const updateDropdownItem = async (req, res) => {
   try {
     const updated = await Dropdown.findByIdAndUpdate(req.params.id, { value: req.body.value }, { new: true });
@@ -36,6 +49,11 @@ export const updateDropdownItem = async (req, res) => {
     return res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
+
+
+// ======================================
+// 4. DELETE DROPDOWN ITEM
+// ======================================
 
 export const deleteDropdownItem = async (req, res) => {
   try {

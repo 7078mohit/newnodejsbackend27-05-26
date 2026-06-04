@@ -5,6 +5,8 @@ import { generateToken } from '../utils/jwtUtils.js';
 
 const hashOtp = (otp) => crypto.createHash('sha256').update(otp).digest('hex');
 
+
+
 // ─── SEND OTP ─────────────────────────────────────────────────────────────────
 export const sendOtp = async (req, res) => {
   try {

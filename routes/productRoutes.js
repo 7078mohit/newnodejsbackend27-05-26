@@ -9,7 +9,9 @@ import {
 
 const router = express.Router();
 
-router.post('/add-product', upload.array('images', 10), createProduct);
+router.post('/create',
+   upload.array('images', 10), 
+   createProduct);
 router.get('/all', getAllProducts);
 router.put('/update/:id', upload.array('images', 10), updateProduct);
 router.delete('/delete-product/:id', deleteProduct);

@@ -3,7 +3,7 @@ import { followUnfollowAstrologer } from '../controllers/followController.js';
 
 const router = express.Router();
 
-// PATCH API
-router.patch("/follow-astrologer", followUnfollowAstrologer);
+// POST API
+router.post("/astrologer-follow-unfollow", followUnfollowAstrologer);
 
 export default router;

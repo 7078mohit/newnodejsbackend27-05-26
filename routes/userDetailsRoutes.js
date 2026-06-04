@@ -4,7 +4,7 @@ const router = express.Router();
 import * as userController from '../controllers/userDetailsController.js';
 
 // CREATE
-router.post('/users', userController.createUser);
+router.post('/register', userController.createUser);
 
 // READ
 router.get('/users', userController.getAllUsers);

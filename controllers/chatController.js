@@ -5,6 +5,11 @@ import Notification from '../models/Notification.js';
 import Astrologer from '../models/Astrologer.js';
 import UserDetail from '../models/UserDetail.js';
 
+
+// ─────────────────────────────────────────────────────────────
+// START CHAT API
+// ─────────────────────────────────────────────────────────────
+
 export const startChat = async (req, res) => {
   try {
     const { senderId, receiverId, senderProfilePic, senderName, chatId, time, message } = req.body;
@@ -34,6 +39,12 @@ export const startChat = async (req, res) => {
   }
 };
 
+
+
+// ─────────────────────────────────────────────────────────────
+// GET USER BY ID API
+// ─────────────────────────────────────────────────────────────
+
 export const getUserById = async (req, res) => {
   try {
     const user = await UserDetail.findById(req.params.id).select('-password');
@@ -43,6 +54,11 @@ export const getUserById = async (req, res) => {
     return res.status(500).json({ success: false, message: 'Internal error', error: error.message });
   }
 };
+
+
+// ─────────────────────────────────────────────────────────────
+// GET ASTROLOGER BY ID API
+// ─────────────────────────────────────────────────────────────
 
 export const getAstrologerById = async (req, res) => {
   try {

@@ -1,16 +1,34 @@
-import Transit from '../models/Transit.js';
+import Transit from '../models/AdminPlanetTransit.js';
 
+
+// create api
 export const createTransit = async (req, res) => {
   try {
-    const { title, description, slug } = req.body;
-    const image = req.file?.path;
-    const transit = await Transit.create({ title, description, slug, image });
-    return res.status(201).json({ message: 'Transit created', data: transit });
+    const { title, description, slug, color, image } = req.body;
+
+    const imageUrl = req.file?.path || image;
+
+    const transit = await Transit.create({
+      title,
+      description,
+      slug,
+      color,
+      image: imageUrl,
+    });
+
+    return res.status(201).json({
+      message: 'Transit created',
+      data: transit,
+    });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({
+      error: err.message,
+    });
   }
 };
 
+
+// get all api
 export const getAllTransits = async (req, res) => {
   try {
     const transits = await Transit.find();
@@ -20,6 +38,8 @@ export const getAllTransits = async (req, res) => {
   }
 };
 
+
+// get by id
 export const getTransitById = async (req, res) => {
   try {
     const transit = await Transit.findById(req.params.id);
@@ -30,6 +50,7 @@ export const getTransitById = async (req, res) => {
   }
 };
 
+// update by id
 export const updateTransit = async (req, res) => {
   try {
     const { title, description, slug } = req.body;
@@ -43,6 +64,7 @@ export const updateTransit = async (req, res) => {
   }
 };
 
+// delete 
 export const deleteTransit = async (req, res) => {
   try {
     await Transit.findByIdAndDelete(req.params.id);

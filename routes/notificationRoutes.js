@@ -4,7 +4,7 @@ import {
   updateFcmToken,
   createNotification,
   sendNotification,
-  getNotifications,
+  getAllNotifications,
   getUserNotifications,
   markAsRead,
   getUnreadCount,
@@ -21,14 +21,16 @@ router.put("/update-token", updateFcmToken);
 router.post("/create", createNotification);
 
 // Fetch all or by user/astrologer id
-router.get("/list", getNotifications);
+router.get("/getAll", getAllNotifications);
 
-router.post("/send-notification", sendNotification);
+router.post("/send", sendNotification);
 
 
-router.get("/UserNotification", getUserNotifications);
-router.patch("/read/:id", markAsRead);
-router.get("/unread-count", getUnreadCount);
+router.get("/get-user-notification", getUserNotifications);
+
+router.patch("/mark-as-read/:id", markAsRead);
+
+router.get("/get-unread-count", getUnreadCount);
 
 
 export default router;

@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/add', addMoney);
 
 // GET - Get available money add options
-router.get('/options', getMoneyOptions);
+router.get('/get-options', getMoneyOptions);
 
 // GET - Get user money add history by userId
 router.get('/user/:userId', getMoneyByUser);

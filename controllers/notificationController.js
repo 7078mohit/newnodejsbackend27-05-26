@@ -1,9 +1,11 @@
+
 import mongoose from 'mongoose';
 import NotificationToken from '../models/NotificationToken.js';
 import Notification from '../models/Notification.js';
 import FollowAstrologer from '../models/FollowAstrologer.js';
 import admin from '../config/fcm.js';
 
+// save fcm token
 export const saveFcmToken = async (req, res) => {
   try {
     const { userId, fcmToken, deviceType } = req.body;
@@ -30,6 +32,8 @@ export const saveFcmToken = async (req, res) => {
   }
 };
 
+
+// update fcm token
 export const updateFcmToken = async (req, res) => {
   try {
     const { oldToken, newToken } = req.body;
@@ -46,6 +50,7 @@ export const updateFcmToken = async (req, res) => {
   }
 };
 
+// create notification
 export const createNotification = async (req, res) => {
   try {
     const { userId, userType, title, body } = req.body;
@@ -59,7 +64,10 @@ export const createNotification = async (req, res) => {
   }
 };
 
-export const getNotifications = async (req, res) => {
+
+// get notification
+// Fetch all or by user/astrologer id
+export const getAllNotifications = async (req, res) => {
   try {
     const { userId, userType } = req.query;
     const query = userId && userType ? { userId, userType } : {};
@@ -70,6 +78,7 @@ export const getNotifications = async (req, res) => {
   }
 };
 
+// send notification
 export const sendNotification = async (req, res) => {
   try {
     const { name, profilePic, id, type, channelName, fcmToken, userType } = req.body;
@@ -126,6 +135,8 @@ export const sendNotification = async (req, res) => {
   }
 };
 
+
+// get user notification
 export const getUserNotifications = async (req, res) => {
   try {
     const { userId, notificationId } = req.query;
@@ -148,6 +159,8 @@ export const getUserNotifications = async (req, res) => {
   }
 };
 
+
+// mark as read
 export const markAsRead = async (req, res) => {
   try {
     const { id } = req.params;
@@ -162,6 +175,7 @@ export const markAsRead = async (req, res) => {
   }
 };
 
+// get unread count
 export const getUnreadCount = async (req, res) => {
   try {
     const { userId } = req.query;

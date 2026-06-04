@@ -1,5 +1,6 @@
 import Feedback from '../models/Feedback.js';
 
+//Create Feedback
 export const createFeedback = async (req, res) => {
   try {
     const { userId, rating, review } = req.body;
@@ -12,6 +13,8 @@ export const createFeedback = async (req, res) => {
   }
 };
 
+
+// Get All Feedback
 export const getAllFeedbacks = async (req, res) => {
   try {
     const feedbacks = await Feedback.find().populate('userId', 'name profile').sort({ createdAt: -1 });
@@ -31,6 +34,7 @@ export const getAllFeedbacks = async (req, res) => {
   }
 };
 
+// Get Feedback By Id
 export const getFeedbackById = async (req, res) => {
   try {
     const feedback = await Feedback.findById(req.params.id).populate('userId', 'name profile');
@@ -41,6 +45,7 @@ export const getFeedbackById = async (req, res) => {
   }
 };
 
+// Update Feedback
 export const updateFeedback = async (req, res) => {
   try {
     const updated = await Feedback.findByIdAndUpdate(req.params.id, { rating: req.body.rating, review: req.body.review }, { new: true });
@@ -51,6 +56,7 @@ export const updateFeedback = async (req, res) => {
   }
 };
 
+// Delete Feedback
 export const deleteFeedback = async (req, res) => {
   try {
     const deleted = await Feedback.findByIdAndDelete(req.params.id);

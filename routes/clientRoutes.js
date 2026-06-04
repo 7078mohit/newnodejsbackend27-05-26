@@ -13,10 +13,13 @@ router.post(
   clientController.signup
 );
 
-router.get('/user-details/get', authMiddleware, clientController.getUserDetails);
 router.get('/:id', clientController.getClientById);
 
-router.put("/update/:id", upload.single("profile"), clientController.updateClient);
+router.get('/loggedin/userdetails', 
+  authMiddleware, 
+  clientController.getLoggedInUserDetails);
+
+router.put("/update/:id", upload.single("profile"), clientController.updateClientById);
 
 // ✅ Delete client by ID
 router.delete("/delete/:id", clientController.deleteClient);

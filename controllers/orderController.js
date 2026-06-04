@@ -1,4 +1,5 @@
 import Razorpay from 'razorpay';
+import crypto from 'crypto';
 import Order from '../models/Order.js';
 import Product from '../models/Product.js';
 import UserDetail from '../models/UserDetail.js';
@@ -9,6 +10,8 @@ const getRazorpay = () =>
     key_secret: process.env.RAZORPAY_KEY_SECRET,
   });
 
+
+// Create Order
 export const createOrder = async (req, res) => {
   try {
     const { productId, userId, amount, sessionId } = req.body;
@@ -25,7 +28,9 @@ export const createOrder = async (req, res) => {
     if (!product) return res.status(404).json({ message: 'Product not found' });
     if (!user) return res.status(404).json({ message: 'User not found' });
 
+
     const razorpay = getRazorpay();
+    console.log("checking")
     const razorpayOrder = await razorpay.orders.create({
       amount: amount * 100,
       currency: 'INR',
@@ -41,13 +46,16 @@ export const createOrder = async (req, res) => {
       .populate('product', 'name price description images')
       .populate('user', 'name email mobileNo');
 
+
     return res.status(201).json({ message: 'Order created successfully', data: populatedOrder, razorpayOrderId: razorpayOrder.id });
   } catch (error) {
+    // console.log(error)
     return res.status(500).json({ message: 'Failed to create order', error: error.message });
   }
 };
 
-export const getOrder = async (req, res) => {
+// get Order by Id
+export const getOrderById = async (req, res) => {
   try {
     const { id } = req.params;
     let order = await Order.findById(id).populate('product', 'name price description images').populate('user', 'name email mobileNo');
@@ -58,5 +66,81 @@ export const getOrder = async (req, res) => {
     return res.json({ message: 'Order fetched successfully', data: order });
   } catch (error) {
     return res.status(500).json({ message: 'Failed to fetch order', error: error.message });
+  }
+};
+
+
+// Verify Payment
+export const verifyPayment = async (req, res) => {
+  try {
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      isTesting,
+    } = req.body;
+
+    if (
+      !razorpay_order_id ||
+      !razorpay_payment_id ||
+      !razorpay_signature
+    ) {
+      return res.status(400).json({
+        message:
+          'razorpay_order_id, razorpay_payment_id and razorpay_signature are required',
+      });
+    }
+
+    // Real Razorpay Verification
+    if (
+      !isTesting ||
+      process.env.NODE_ENV === 'production'
+    ) {
+      const generatedSignature = crypto
+        .createHmac(
+          'sha256',
+          process.env.RAZORPAY_KEY_SECRET
+        )
+        .update(
+          `${razorpay_order_id}|${razorpay_payment_id}`
+        )
+        .digest('hex');
+
+      if (generatedSignature !== razorpay_signature) {
+        return res.status(400).json({
+          message: 'Payment verification failed',
+        });
+      }
+    }
+
+    const order = await Order.findOne({
+      razorpayOrderId: razorpay_order_id,
+    });
+
+    if (!order) {
+      return res.status(404).json({
+        message: 'Order not found',
+      });
+    }
+
+    order.status = 'CONFIRMED';
+    order.razorpayPaymentId = razorpay_payment_id;
+    order.razorpaySignature = razorpay_signature;
+
+    await order.save();
+
+    const populatedOrder = await Order.findById(order._id)
+      .populate('product', 'name price description images')
+      .populate('user', 'name email mobileNo');
+
+    return res.status(200).json({
+      message: 'Payment verified successfully',
+      data: populatedOrder,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: 'Payment verification failed',
+      error: error.message,
+    });
   }
 };

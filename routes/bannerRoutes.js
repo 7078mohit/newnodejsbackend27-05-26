@@ -24,7 +24,7 @@ router.post(
 );
 
 router.delete(
-    '/banners/:id',
+    '/delete/:id',
     authMiddleware,
     deleteBanners
 );

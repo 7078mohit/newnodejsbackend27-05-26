@@ -1,6 +1,8 @@
 import nodemailer from 'nodemailer';
 import Contact from '../models/Contact.js';
 
+
+//Add Contact
 export const addContact = async (req, res) => {
   try {
     const { name, email, mobile, gender, dob_time, place_of_birth, query } = req.body;

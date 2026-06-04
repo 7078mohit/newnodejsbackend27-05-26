@@ -118,6 +118,8 @@ export const startCall = async (req, res) => {
   }
 };
 
+
+
 // ─── UPDATE CALL STATUS ───────────────────────────────────────────────────────
 export const updateCallStatus = async (req, res) => {
   try {
@@ -159,6 +161,8 @@ export const updateCallStatus = async (req, res) => {
   }
 };
 
+
+
 // ─── GET INCOMING CALLS ───────────────────────────────────────────────────────
 export const getIncomingCalls = async (req, res) => {
   try {
@@ -171,6 +175,8 @@ export const getIncomingCalls = async (req, res) => {
     return res.status(500).json({ success: false, message: 'Internal error', error: error.message });
   }
 };
+
+
 
 // ─── GET CALL HISTORY ─────────────────────────────────────────────────────────
 export const getCallHistory = async (req, res) => {
@@ -200,6 +206,7 @@ export const getCallHistory = async (req, res) => {
     return res.status(500).json({ success: false, message: 'Internal error', error: error.message });
   }
 };
+
 
 // ─── GET EARNINGS ─────────────────────────────────────────────────────────────
 export const getEarnings = async (req, res) => {

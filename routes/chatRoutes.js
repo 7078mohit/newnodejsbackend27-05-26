@@ -3,7 +3,7 @@ import * as ChatController from '../controllers/chatController.js';
 
 const router = express.Router();
 
-router.post("/chat", ChatController.startChat);
+router.post("/start", ChatController.startChat);
 // User
 router.get("/user/:id", ChatController.getUserById);
 
