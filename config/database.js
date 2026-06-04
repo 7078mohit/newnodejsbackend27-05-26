@@ -40,6 +40,7 @@ export async function connectDatabase(uri) {
     });
 
     console.log(`MongoDB Connected: ${connection.connection.host}`);
+    console.log(`MongoDB Database Name: ${connection.connection.name}`);
 
     mongoose.connection.on('connected', () => {
       console.log('Mongoose connected');
