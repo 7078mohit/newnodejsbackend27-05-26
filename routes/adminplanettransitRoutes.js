@@ -33,7 +33,6 @@ router.get('/get-all',
 // get one
 router.get(
     '/get-one/:id',
-    authMiddleware,
     getTransitById
 );
 
