@@ -1,11 +1,36 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const poojaSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  description: String,
-  image: String,
-  price: { type: Number, required: true },
-  enquiryBtn: { type: String },
-});
+const poojaSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
-export default mongoose.model('Pooja', poojaSchema);
+    description: {
+      type: String,
+      trim: true,
+    },
+
+    image: {
+      type: String,
+    },
+
+    price: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+
+    enquiryBtn: {
+      type: String,
+      default: "Enquire Now",
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+export default mongoose.model("Pooja", poojaSchema);

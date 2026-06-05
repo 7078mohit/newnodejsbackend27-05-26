@@ -1,15 +1,7 @@
 import PrivacyPolicy from '../models/privacyPolicyModel.js';
 
-export const getPrivacyPolicy = async (req, res) => {
-  try {
-    const policy = await PrivacyPolicy.findOne().sort({ updatedAt: -1 });
-    if (!policy) return res.status(404).json({ message: 'Privacy Policy not found' });
-    return res.status(200).json(policy);
-  } catch (err) {
-    return res.status(500).json({ message: 'Server Error' });
-  }
-};
 
+// create privacy policy
 export const addPrivacyPolicy = async (req, res) => {
   try {
     const newPolicy = await PrivacyPolicy.create({ content: req.body.content });
@@ -19,6 +11,20 @@ export const addPrivacyPolicy = async (req, res) => {
   }
 };
 
+
+// get first and new privacy policy
+export const getNewPrivacyPolicy = async (req, res) => {
+  try {
+    const policy = await PrivacyPolicy.findOne().sort({ updatedAt: -1 });
+    if (!policy) return res.status(404).json({ message: 'Privacy Policy not found' });
+    return res.status(200).json(policy);
+  } catch (err) {
+    return res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+
+// update privacy policy
 export const updatePrivacyPolicy = async (req, res) => {
   try {
     const updated = await PrivacyPolicy.findByIdAndUpdate(
@@ -33,6 +39,8 @@ export const updatePrivacyPolicy = async (req, res) => {
   }
 };
 
+
+// delete privacy policy
 export const deletePrivacyPolicy = async (req, res) => {
   try {
     const deleted = await PrivacyPolicy.findByIdAndDelete(req.params.id);

@@ -1,5 +1,7 @@
 import Pooja from '../models/Pooja.js';
 
+
+// create pooja
 export const createPooja = async (req, res) => {
   try {
     const { name, description, price, enquiryBtn } = req.body;
@@ -15,6 +17,8 @@ export const createPooja = async (req, res) => {
   }
 };
 
+
+// get all pooja
 export const getAllPoojas = async (req, res) => {
   try {
     const poojas = await Pooja.find();
@@ -24,6 +28,7 @@ export const getAllPoojas = async (req, res) => {
   }
 };
 
+// get pooja by id
 export const getPoojaById = async (req, res) => {
   try {
     const pooja = await Pooja.findById(req.params.id);
@@ -34,6 +39,8 @@ export const getPoojaById = async (req, res) => {
   }
 };
 
+
+// update pooja
 export const updatePooja = async (req, res) => {
   try {
     const { name, description, price, enquiryBtn } = req.body;
@@ -52,6 +59,8 @@ export const updatePooja = async (req, res) => {
   }
 };
 
+
+// delete pooja
 export const deletePooja = async (req, res) => {
   try {
     await Pooja.findByIdAndDelete(req.params.id);
