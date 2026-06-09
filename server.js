@@ -59,10 +59,22 @@ const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
 
 const allowedOrigins = [
-  process.env.FRONTEND_URL,
+  'https://www.mantrajyotish.com',
+  'https://mantrajyotish.com',
   'http://localhost:5173',
   'http://localhost:3000'
 ].filter(Boolean);
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 
 const io = new Server(server, {
   cors: {
@@ -81,10 +93,10 @@ app.use(compression());
 
 app.use(morgan('dev'));
 
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true
-}));
+// app.use(cors({
+//   origin: allowedOrigins,
+//   credentials: true
+// }));
 
 app.use(express.json({
   limit: '10mb'
@@ -148,6 +160,7 @@ app.get('/', (req, res) => {
     message: 'Backend Auto Deployed Successfull by developer'
   });
 });
+
 
 app.get('/horoscope/:sign/:period', (req, res) => {
   try {
