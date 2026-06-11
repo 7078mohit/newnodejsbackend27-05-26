@@ -4,15 +4,15 @@ import * as reviewController from '../controllers/reviewController.js';
 const router = express.Router();
 
 // Create Review
-router.post("/", reviewController.createReview);
+router.post("/create", reviewController.createReview);
 
 // Get Reviews by Astrologer + Avg rating
-router.get("/:astrologerId", reviewController.getReviewsByAstrologer);
+router.get("/get/:astrologerId", reviewController.getReviewsByAstrologer);
 
 // Update Review
-router.put("/:reviewId", reviewController.updateReview);
+router.put("/update/:reviewId", reviewController.updateReview);
 
 // Delete Review
-router.delete("/:reviewId", reviewController.deleteReview);
+router.delete("/delete/:reviewId", reviewController.deleteReview);
 
 export default router;

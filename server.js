@@ -151,7 +151,7 @@ app.use('/api/feedback', feedbackRoutes);
 app.use('/api/follower', followRoutes);
 app.use('/api/call', callRoutes);
 app.use('/api/chat', chatRoutes);
-app.use('/api/ratings', ratingReviewRoutes);
+app.use('/api/rating', ratingReviewRoutes);
 app.use('/api/adminplanettransit', adminPlanetTransitRoutes);
 
 app.get('/', (req, res) => {

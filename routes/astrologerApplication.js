@@ -7,6 +7,7 @@ import {
   updateAstrologer,
   deleteAstrologer,
   getAstrologer,
+  loginAstrologer,
 } from '../controllers/astrologerApplication.js';
 
 const router = express.Router();
@@ -16,6 +17,9 @@ router.post(
   astrologerUploads,
   createAstrologer
 );
+
+router.post("/login", loginAstrologer);
+
 
 router.get('/all', getAllAstrologers);
 

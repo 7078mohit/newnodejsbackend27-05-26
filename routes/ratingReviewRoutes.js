@@ -4,7 +4,7 @@ import * as ratingReviewController from '../controllers/ratingReviewController.j
 const router = express.Router();
 
 router.post("/rate-review", ratingReviewController.addOrUpdateReview);
-router.get("/astrologer/:astrologerId", ratingReviewController.getAstrologerReviews);
-router.delete("/:reviewId", ratingReviewController.deleteReview);
+router.get("/get-astrologer/:astrologerId", ratingReviewController.getAstrologerReviews);
+router.delete("/delete/:reviewId", ratingReviewController.deleteReview);
 
 export default router;
