@@ -1,10 +1,16 @@
 import mongoose from 'mongoose';
 
 const transactionSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'UserDetail' },
-  type: { type: String, enum: ['debit', 'credit'] },
-  amount: Number,
-  reason: String,
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'UserDetail'
+  },
+  type: {
+    type: String,
+    enum: ['debit', 'credit']
+  },
+  amount: { type: Number },
+  reason: { type: String },
   createdAt: { type: Date, default: Date.now },
 });
 

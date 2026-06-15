@@ -7,18 +7,18 @@ import * as userController from '../controllers/userDetailsController.js';
 router.post('/register', userController.createUser);
 
 // READ
-router.get('/users', userController.getAllUsers);
-router.get('/users/:id', userController.getUserById);
-// router.get('/users/uid/:uid', userController.getUserByUid);
+router.get('/get-all', userController.getAllUsers);
+router.get('/get/:id', userController.getUserById);
+router.get('/get/uid/:uid', userController.getUserByUid);
 
 // UPDATE
-router.put('/users/:id', userController.updateUser);
-router.put('/users/:id/wallet', userController.updateWalletBalance);
-router.put('/users/:id/follow', userController.toggleFollowAstrologer);
-router.put('/users/:id/fcm-token', userController.updateFcmToken);
-router.put('/users/:id/deactivate', userController.softDeleteUser);
+router.put('/update/:id', userController.updateUser);
+router.put('/update-wallet/:id', userController.updateWalletBalance);
+router.put('/follow-unfollow-astro/:id', userController.toggleFollowAstrologer);
+router.put('/update-fcm-token/:id', userController.updateFcmToken);
+router.put('/users-deactivate/:id', userController.softDeleteUser);
 
 // DELETE
-router.delete('/users/:id', userController.deleteUser);
+router.delete('/delete/:id', userController.deleteUser);
 
 export default router;

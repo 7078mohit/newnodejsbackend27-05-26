@@ -5,12 +5,14 @@ const router = express.Router();
 
 // Add money to wallet
 router.post('/add', walletController.addMoney);
-router.post('/recharge/create-order', walletController.createRechargeOrder);
-router.post('/recharge/verify', walletController.verifyRechargePayment);
-router.get('/summary/:userId', walletController.getCreditSummary);
-router.get('/all', walletController.getAllWallets);
-
+router.get('/get-all', walletController.getAllWallets);
 // Get wallet by userId
-router.get('/:userId', walletController.getWalletByUser);
+router.get('/get/:userId', walletController.getWalletByUser);
+
+router.get('/get-credit-summary/:userId', walletController.getCreditSummary);
+router.post('/recharge-create-order', walletController.createRechargeOrder);
+router.post('/recharge-verify', walletController.verifyRechargePayment);
+
+
 
 export default router;

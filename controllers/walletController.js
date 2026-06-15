@@ -43,6 +43,17 @@ export const addMoney = async (req, res) => {
   }
 };
 
+
+// ─── GET ALL WALLETS (admin) ──────────────────────────────────────────────────
+export const getAllWallets = async (req, res) => {
+  try {
+    const wallets = await Wallet.find().populate('user');
+    return res.status(200).json({ success: true, wallets });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Server error', error: err.message });
+  }
+};
+
 // ─── GET WALLET BY USER ───────────────────────────────────────────────────────
 export const getWalletByUser = async (req, res) => {
   try {
@@ -54,15 +65,6 @@ export const getWalletByUser = async (req, res) => {
   }
 };
 
-// ─── GET ALL WALLETS (admin) ──────────────────────────────────────────────────
-export const getAllWallets = async (req, res) => {
-  try {
-    const wallets = await Wallet.find().populate('user');
-    return res.status(200).json({ success: true, wallets });
-  } catch (err) {
-    return res.status(500).json({ success: false, message: 'Server error', error: err.message });
-  }
-};
 
 // ─── GET CREDIT SUMMARY (by _id) ─────────────────────────────────────────────
 export const getCreditSummary = async (req, res) => {
